@@ -1,0 +1,56 @@
+key not found: _PYSPARK_DRIVER_CALLBACK_HOST
+
+I understand this has been discussed before, however, now able to sort it out with suggested solution, so I decided to post here again - maybe my case is unique? Thank you very much, it is been stuck here for a week now, any help is greatly appreciated.
+
+Environment:
+I am deploying/configuring jupyterhub on another cluster by essentially following my successful implementation on a previous sandbox cluster, stuck here now due to the current environment is not clear to me.
+
+Here is it:
+spark: /opt/cloudera/parcels/CDH/lib/spark
+python: /usr/bin/python, 2.7.5
+
+Kernel (python 2): (the env part was manually added by following given working example here #2116), by the way, the kernel was created long time ago under Jupyter, would that be an issue? How do I know which python I was using to create the kernel?
+
+{
+ "display_name": "Python 2",
+ "language": "python",
+ "argv": [
+  "python",
+  "-m",
+  "ipykernel_launcher",
+  "-f",
+  "{connection_file}"
+ ],
+"env": {
+  "HADOOP_CONF_DIR":"/etc/hive/conf",
+  "PYSPARK_PYTHON":"/usr/bin/python",
+  "SPARK_HOME": "/opt/cloudera/parcels/CDH/lib/spark",
+  "WRAPPED_SPARK_HOME": "/opt/cloudera/parcels/CDH/lib/spark",
+  "PYTHONPATH": "{{ app_packages_home }}/lib/python2.7/site-packages:{{ jupyter_extension_venv }}/lib/python2.7/site-packages:{{ spark_home }}/python:{{ spark_home }}/python/lib/py4j-0.10.4-src.zip",
+  "PYTHONSTARTUP": "/opt/cloudera/parcels/CDH/lib/spark/python/pyspark/shell.py",
+  "PYSPARK_SUBMIT_ARGS": "--master yarn-client --jars {{ spark_home }}/lib/spark-examples.jar pyspark-shell"
+ }
+} 
+Notebook:
+
+import sys,os
+os.environ["SPARK_HOME"] = '/opt/cloudera/parcels/CDH/lib/spark'
+os.environ['PYSPARK_PYTHON'] = '/usr/bin/python'
+os.environ['PYSPARK_DRIVER_PYTHON'] = '/usr/bin/python'
+os.environ['JAVA_HOME'] = '/usr/java/latest'
+sys.path.append('/usr/bin/python')
+sys.path.append('/opt/cloudera/parcels/CDH/lib/spark/python/lib/py4j-0.9-src.zip') 
+
+import pyspark
+from pyspark import SparkContext, SparkConf
+
+conf = SparkConf()
+
+conf.setMaster('yarn-client')
+conf.setAppName('raymond - test')
+
+sc = SparkContext(conf = conf)
+Error:
+
+ERROR util.SparkUncaughtExceptionHandler: Uncaught exception in thread Thread[main,5,main]
+java.util.NoSuchElementException: key not found: _PYSPARK_DRIVER_CALLBACK_HOST
