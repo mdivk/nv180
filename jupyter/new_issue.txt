@@ -1,0 +1,56 @@
+This JupyterHub has thrown me issue after issue, below is the latest one reported as issue #2172
+https://github.com/jupyterhub/jupyterhub/issues/2172
+
+I am able to start JupyterHub integrated with LDAP now.
+
+I need to set up the security practice here:
+
+We have a dedicated account sid to start the JHub from sid's home;
+After the JHub is started, all authorized users should be able to log in as long as s/he can authenticate against in the LDAP;
+For the sid's home, the three files: config, key, cert are set to 755 along with the sid's home folder;
+
+I received the following error messages when logging as myself:
+
+[I 2018-09-21 15:25:34.586 JupyterHub spawner:1100] Spawning jupyterhub-singleuser --port=57169
+Failed to set groups [Errno 1] Operation not permitted
+[E 2018-09-21 15:25:34.930 JupyterHub user:477] Unhandled error starting rxie's server: Exception occurred in preexec_fn.
+[E 2018-09-21 15:25:34.968 JupyterHub web:1670] Uncaught exception GET /hub/user/rxie/ (192.168.103.81)
+HTTPServerRequest(protocol='https', host='192.168.100.219', method='GET', uri='/hub/user/rxie/', version='HTTP/1.1', remote_ip='192.168.103.81')
+Traceback (most recent call last):
+File "/usr/lib64/python3.6/site-packages/tornado/web.py", line 1592, in _execute
+result = yield result
+File "/usr/lib/python3.6/site-packages/jupyterhub/handlers/base.py", line 1052, in get
+await self.spawn_single_user(user)
+File "/usr/lib/python3.6/site-packages/jupyterhub/handlers/base.py", line 705, in spawn_single_user
+timedelta(seconds=self.slow_spawn_timeout), finish_spawn_future
+File "/usr/lib/python3.6/site-packages/jupyterhub/handlers/base.py", line 626, in finish_user_spawn
+await spawn_future
+File "/usr/lib/python3.6/site-packages/jupyterhub/user.py", line 489, in spawn
+raise e
+File "/usr/lib/python3.6/site-packages/jupyterhub/user.py", line 409, in spawn
+url = await gen.with_timeout(timedelta(seconds=spawner.start_timeout), f)
+File "/usr/lib/python3.6/site-packages/jupyterhub/spawner.py", line 1110, in start
+self.proc = Popen(cmd, **popen_kwargs)
+File "/usr/lib64/python3.6/subprocess.py", line 709, in init
+restore_signals, start_new_session)
+File "/usr/lib64/python3.6/subprocess.py", line 1345, in _execute_child
+raise child_exception_type(err_msg)
+subprocess.SubprocessError: Exception occurred in preexec_fn.
+
+[D 2018-09-21 15:25:34.975 JupyterHub base:880] No template for 500
+[E 2018-09-21 15:25:35.052 JupyterHub log:150] {
+"X-Forwarded-Host": "192.168.100.219",
+"X-Forwarded-Proto": "https",
+"X-Forwarded-Port": "443",
+"X-Forwarded-For": "192.168.103.81",
+"Upgrade-Insecure-Requests": "1",
+"Connection": "close",
+"Cookie": "jupyterhub-hub-login="2|1:0|10:1537557673|20:jupyterhub-hub-login|44:NzdjNzU3M2YxY2JmNGVkMzlkNDIyZGQ5NTczMmMxMGM=|1c4290d9f0e5dd61839470d1bd85f0ae3142c458592852b6439310d4a095f556"; _xsrf=2|eaf1d31b|01ea3e5f0d878c645c53b39ea54097f5|1537449224; jupyterhub-session-id=468e8f726b49402d85a5dbe8dc9394b1",
+"Accept-Encoding": "gzip, deflate, br",
+"Accept-Language": "en-US,en;q=0.5",
+"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8",
+"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0",
+"Host": "192.168.100.219"
+}
+[E 2018-09-21 15:25:35.052 JupyterHub log:158] 500 GET /hub/user/rxie/ (rxie@192.168.103.81) 578.51ms
+[D 2018-09-21 15:25:35.205 JupyterHub log:158] 304 GET /favicon.ico (@192.168.103.81) 2.58ms
