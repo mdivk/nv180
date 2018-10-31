@@ -23,7 +23,7 @@ def get_proc_info():
     df_mem = []
     # running ports
     ports = []
-    default_port = 8888
+    default_port = 443
 
     for pid in pids:
         try:
@@ -75,7 +75,7 @@ def get_session_info(ports, opts):
         for hostname in set(hostnames):
             sessions = None
             try:
-                base_url = 'http://{0}:{1}/'.format(hostname, port)
+                base_url = 'https://{0}:{1}/'.format(hostname, port)
                 s = requests.Session()
                 if opts.get('password'):
                     # Seems jupyter auth process has changed, need to first get a cookie,
