@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/opt/al2_venv/bin/python3
 import sys, os, getopt, errno
 import logging
 import getpass
@@ -132,21 +132,6 @@ class Excel2csv():
         while idx < nsheet:
 
             sheet = xls.sheet_by_index(idx).name
-            #df = pd.read_excel(xls, sheet_name=idx)
-            # rename index to wamp_date and make a column
-            #
-            # df = pd.melt(df, id_vars=['wampproduct', 'wamp_date', 'wampregion', 'region_search_phrase', 'wamp', 'date_pull'],
-            #              var_name='wampregion', value_name='wamp')
-            #
-            # df = pd.melt(df, id_vars=['wampproduct', 'wamp_date', 'wampregion', 'region_search_phrase', 'wamp',
-            #                           'date_pull'],
-            #             var_name='wampregion', value_name = 'wampregion')
-            #
-            #              var_name='wampregion', value_name = 'region_search_phrase',
-            #              var_name='wampregion', value_name = 'wamp',
-            #              var_name='wampregion', value_name = 'date_pull')
-
-            #df.index.rename('wamp_date', inplace=True)
 
             if (sheet != 'Internet '):
                 print("Processing " + sheet)
@@ -191,32 +176,25 @@ class Excel2csv():
                 num_cols = cur_sheet.ncols  # Number of columns
                 num_rows = cur_sheet.nrows  # Number of rows, each row share the same wamp_date
 
-                for row_idx in range(2, num_rows - 1):  # Iterate through rows, starting with row 3
+                for row_idx in range(2, num_rows):  # Iterate through rows, starting with row 3
 
                     raw_date = cur_sheet.cell(row_idx, 0)
                     raw_date_extract = str(raw_date).split(":")[1]
                     y, m, d, h, i, s = xlrd.xldate_as_tuple(float(raw_date_extract), 0)
                     wamp_date = ("{0}-{1}-{2}".format(y, m, d))
 
-                    for col_idx in range(1, num_cols - 1):  # Iterate through columns
+                    for col_idx in range(1, num_cols):  # Iterate through columns
                         cell_obj = cur_sheet.cell(row_idx, col_idx)  # Get cell object by row, col
                         wampregion = str(cur_sheet.cell(1, col_idx)).split("'")[1] # for region, it is always the row 2
                         region_search_phrase = wampregion
                         wamp = cell_obj.value
-                        
-                        #list = [wampproduct, wamp_date, wampregion, region_search_phrase, wamp, date_pull, end_of_month_dt]
-                        list = {"wampproduct":wampproduct, "wamp_date": wamp_date, "wampregion":wampregion, "region_search_phrase":region_search_phrase, "wamp":wamp, "date_pull":date_pull, "end_of_month_dt": end_of_month_dt}
-                        # add each cell to df
-                        # df['wampproduct'] = wampproduct
-                        # df['wamp_date'] = wamp_date
-                        # df['wampregion'] = wampregion
-                        # df['region_search_phrase'] = region_search_phrase
-                        # df['wamp'] = wamp
-                        # df['date_pull'] = date_pull
-                        # df['end_of_month_dt'] = end_of_month_dt
 
-                        #current issue: how to create one row dataframe and append it to the final df?
-                        df_csv = df_csv.append(list, ignore_index=True)
+                        if wamp != '':
+                            #create a list to store the row of data (which will be turned to multiple data rows (num_cols - 1) in the dataframe
+                            list = {"wampproduct":wampproduct, "wamp_date": wamp_date, "wampregion":wampregion, "region_search_phrase":region_search_phrase, "wamp":wamp, "date_pull":date_pull, "end_of_month_dt": end_of_month_dt}
+
+                            #current issue: how to create one row dataframe and append it to the final df?
+                            df_csv = df_csv.append(list, ignore_index=True)
 
                 idx = idx + 1
             else:
@@ -242,7 +220,7 @@ class Excel2csv():
 
         elapsed_time = time.time() - start_time
 
-        print("Total Time Cost on Comparing the two Parquet files(seconds): " + str(elapsed_time))
+        print("Total Time Cost on extracting sheets to csv (seconds): " + str(elapsed_time))
 
     def run(self):
         start_time = time.time()
