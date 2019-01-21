@@ -1,5 +1,6 @@
 Building a Data Pipeline with Airflow 
 
+Note: all credits go to Mark Litwintschik, this post is just to repeat his blog.
 Ref: 
 https://tech.marksblogg.com/airflow-postgres-redis-forex.html
 https://openexchangerates.org/
@@ -7,3 +8,466 @@ https://openexchangerates.org/
 1. Sign up with Open Exchange Rates 
 Email: pas
 API ID: c24db0a40454c22986717b7c16e0be
+
+2. Basic API call
+Building a Data Pipeline with Airflow 
+
+Ref: 
+https://tech.marksblogg.com/airflow-postgres-redis-forex.html
+https://openexchangerates.org/
+
+1. Sign up with Open Exchange Rates 
+Email: pas
+API ID: c24db0a40454c22986717b7c16e0be
+
+2. Basic API 
+The API call returns result in JSON format as below
+$ curl -S https://openexchangerates.org/api/latest.json?app_id=c24db0a40454c22986717b7c16e0be | \
+    python -mjson.tool
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  3795  100  3795    0     0  16293      0 --:--:-- --:--:-- --:--:-- 16357
+{
+    "disclaimer": "Usage subject to terms: https://openexchangerates.org/terms",
+    "license": "https://openexchangerates.org/license",
+    "timestamp": 1548039600,
+    "base": "USD",
+    "rates": {
+        "AED": 3.673181,
+        "AFN": 76.0085,
+        "ALL": 109.508609,
+        "AMD": 486.408251,
+        "ANG": 1.779798,
+        "AOA": 310.214,
+        "ARS": 37.773627,
+        "AUD": 1.394404,
+        "AWG": 1.800506,
+        "AZN": 1.7025,
+        "BAM": 1.719586,
+        "BBD": 2,
+        "BDT": 83.879384,
+        "BGN": 1.720124,
+        "BHD": 0.376634,
+        "BIF": 1799.243808,
+        "BMD": 1,
+        "BND": 1.359795,
+        "BOB": 6.928901,
+        "BRL": 3.754067,
+        "BSD": 1,
+        "BTC": 0.000281912185,
+        "BTN": 71.187767,
+        "BWP": 10.533036,
+        "BYN": 2.152592,
+        "BZD": 2.015537,
+        "CAD": 1.326436,
+        "CDF": 1648.975278,
+        "CHF": 0.995173,
+        "CLF": 0.024214,
+        "CLP": 671.095948,
+        "CNH": 6.794882,
+        "CNY": 6.7852,
+        "COP": 3140.037326,
+        "CRC": 600.131311,
+        "CUC": 1,
+        "CUP": 25.75,
+        "CVE": 92.125,
+        "CZK": 22.4828,
+        "DJF": 178,
+        "DKK": 6.562105,
+        "DOP": 50.667912,
+        "DZD": 118.33216,
+        "EGP": 17.88,
+        "ERN": 14.997419,
+        "ETB": 28.297027,
+        "EUR": 0.878985,
+        "FJD": 2.124091,
+        "FKP": 0.7771,
+        "GBP": 0.7771,
+        "GEL": 2.65,
+        "GGP": 0.7771,
+        "GHS": 4.918673,
+        "GIP": 0.7771,
+        "GMD": 49.52,
+        "GNF": 9146.842675,
+        "GTQ": 7.739175,
+        "GYD": 209.23066,
+        "HKD": 7.84455,
+        "HNL": 24.460634,
+        "HRK": 6.532531,
+        "HTG": 78.688014,
+        "HUF": 279.412711,
+        "IDR": 14209.998826,
+        "ILS": 3.68818,
+        "IMP": 0.7771,
+        "INR": 71.250321,
+        "IQD": 1196.448096,
+        "IRR": 42105,
+        "ISK": 121.129955,
+        "JEP": 0.7771,
+        "JMD": 130.6092,
+        "JOD": 0.709603,
+        "JPY": 109.72131316,
+        "KES": 101.62,
+        "KGS": 68.704754,
+        "KHR": 4024.73513,
+        "KMF": 433.30205,
+        "KPW": 900,
+        "KRW": 1124.7425,
+        "KWD": 0.30301,
+        "KYD": 0.835599,
+        "KZT": 380.722053,
+        "LAK": 8584.891917,
+        "LBP": 1517.096331,
+        "LKR": 182.149153,
+        "LRD": 159.750242,
+        "LSL": 13.850396,
+        "LYD": 1.39075,
+        "MAD": 9.572856,
+        "MDL": 17.182,
+        "MGA": 3652.473187,
+        "MKD": 54.086016,
+        "MMK": 1541.733036,
+        "MNT": 2453.75,
+        "MOP": 8.101594,
+        "MRO": 357,
+        "MRU": 36.4,
+        "MUR": 34.309876,
+        "MVR": 15.499961,
+        "MWK": 731.095539,
+        "MXN": 19.1053,
+        "MYR": 4.1125,
+        "MZN": 61.699989,
+        "NAD": 13.850396,
+        "NGN": 363.75,
+        "NIO": 32.636283,
+        "NOK": 8.5587,
+        "NPR": 113.927369,
+        "NZD": 1.484831,
+        "OMR": 0.38482,
+        "PAB": 1,
+        "PEN": 3.332047,
+        "PGK": 3.378939,
+        "PHP": 52.588679,
+        "PKR": 140.263812,
+        "PLN": 3.770013,
+        "PYG": 6079.892758,
+        "QAR": 3.65005,
+        "RON": 4.139594,
+        "RSD": 104.159323,
+        "RUB": 66.3482,
+        "RWF": 897.588675,
+        "SAR": 3.7508,
+        "SBD": 8.072908,
+        "SCR": 13.642377,
+        "SDG": 47.736078,
+        "SEK": 9.021952,
+        "SGD": 1.357801,
+        "SHP": 0.7771,
+        "SLL": 8390,
+        "SOS": 580.103486,
+        "SRD": 7.458,
+        "SSP": 130.2634,
+        "STD": 21050.59961,
+        "STN": 21.585,
+        "SVC": 8.773651,
+        "SYP": 514.990114,
+        "SZL": 13.850424,
+        "THB": 31.72,
+        "TJS": 9.463855,
+        "TMT": 3.499986,
+        "TND": 3.01948,
+        "TOP": 2.294442,
+        "TRY": 5.323508,
+        "TTD": 6.795321,
+        "TWD": 30.829,
+        "TZS": 2308.2,
+        "UAH": 28.024389,
+        "UGX": 3719.262664,
+        "USD": 1,
+        "UYU": 32.68745,
+        "UZS": 8358.410806,
+        "VEF": 248487.642241,
+        "VES": 1000.225839,
+        "VND": 23254.636533,
+        "VUV": 111.082142,
+        "WST": 2.604175,
+        "XAF": 576.576577,
+        "XAG": 0.06520404,
+        "XAU": 0.00077955,
+        "XCD": 2.70255,
+        "XDR": 0.716394,
+        "XOF": 576.576577,
+        "XPD": 0.00072447,
+        "XPF": 104.89085,
+        "XPT": 0.00124947,
+        "YER": 250.349279,
+        "ZAR": 13.838588,
+        "ZMW": 11.937127,
+        "ZWL": 322.355011
+    }
+}
+	
+	
+3. Installing Prerequisites
+
+For Ubuntu, using apt-get
+$ sudo apt-get update
+$ sudo apt-get install \
+    libffi-dev \
+    libmysqlclient-dev \
+    mysql-server \
+    postgresql-9.3 \
+    postgresql-server-dev-9.3 \
+    python-dev \
+    python-pip \
+    python-virtualenv \
+    rabbitmq-server \
+    redis-server
+    
+For CentOS, using yum
+$ sudo yum install \
+    libffi-dev \
+    libmysqlclient-dev \
+    mysql-server \
+    postgresql-9.3 \
+    postgresql-server-dev-9.3 \
+    python-dev \
+    python-pip \
+    python-virtualenv \
+    rabbitmq-server \
+    redis-server	
+	
+[rxie@pocnnr1n1 downloads]$ sudo yum install \
+>     libffi-dev \
+>     libmysqlclient-dev \
+>     mysql-server \
+>     postgresql-9.3 \
+>     postgresql-server-dev-9.3 \
+>     python-dev \
+>     python-pip \
+>     python-virtualenv \
+>     rabbitmq-server \
+>     redis-server
+[sudo] password for rxie:
+Loaded plugins: fastestmirror, langpacks
+Determining fastest mirrors
+epel/x86_64/metalink                                                                                            |  13 kB  00:00:00
+ * base: mirror.csclub.uwaterloo.ca
+ * epel: mirror.metrocast.net
+ * extras: mirror.calgah.com
+ * ius: muug.ca
+ * updates: mirror.calgah.com
+base                                                                                                            | 3.6 kB  00:00:00
+cloudera-manager                                                                                                |  951 B  00:00:00
+docker-ce-edge                                                                                                  | 3.5 kB  00:00:00
+docker-ce-stable                                                                                                | 3.5 kB  00:00:00
+docker-ce-test                                                                                                  | 3.5 kB  00:00:00
+epel                                                                                                            | 4.7 kB  00:00:00
+extras                                                                                                          | 3.4 kB  00:00:00
+ius                                                                                                             | 2.3 kB  00:00:00
+updates                                                                                                         | 3.4 kB  00:00:00
+(1/8): docker-ce-stable/x86_64/primary_db                                                                       |  20 kB  00:00:01
+(2/8): docker-ce-edge/x86_64/primary_db                                                                         |  24 kB  00:00:01
+(3/8): docker-ce-test/x86_64/primary_db                                                                         |  72 kB  00:00:01
+(4/8): extras/7/x86_64/primary_db                                                                               | 156 kB  00:00:01
+(5/8): epel/x86_64/updateinfo                                                                                   | 952 kB  00:00:02
+(6/8): ius/x86_64/primary_db                                                                                    | 377 kB  00:00:01
+(7/8): updates/7/x86_64/primary_db                                                                              | 1.3 MB  00:00:03
+(8/8): epel/x86_64/primary_db                                                                                   | 6.6 MB  00:00:07
+No package libffi-dev available.
+No package libmysqlclient-dev available.
+No package mysql-server available.
+No package postgresql-9.3 available.
+No package postgresql-server-dev-9.3 available.
+No package python-dev available.
+No package redis-server available.
+Resolving Dependencies
+--> Running transaction check
+---> Package python-virtualenv.noarch 0:15.1.0-2.el7 will be installed
+---> Package python2-pip.noarch 0:8.1.2-6.el7 will be installed
+---> Package rabbitmq-server.noarch 0:3.3.5-34.el7 will be installed
+--> Processing Dependency: erlang-erts >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-kernel >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-mnesia >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-os_mon >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-public_key >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-sasl >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-ssl >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-stdlib >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-tools >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-xmerl >= R12B-3 for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Processing Dependency: erlang-sd_notify for package: rabbitmq-server-3.3.5-34.el7.noarch
+--> Running transaction check
+---> Package erlang-erts.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-kernel.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-mnesia.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-os_mon.x86_64 0:R16B-03.18.el7 will be installed
+--> Processing Dependency: erlang-otp_mibs(x86-64) = R16B-03.18.el7 for package: erlang-os_mon-R16B-03.18.el7.x86_64
+--> Processing Dependency: erlang-snmp(x86-64) = R16B-03.18.el7 for package: erlang-os_mon-R16B-03.18.el7.x86_64
+---> Package erlang-public_key.x86_64 0:R16B-03.18.el7 will be installed
+--> Processing Dependency: erlang-asn1(x86-64) = R16B-03.18.el7 for package: erlang-public_key-R16B-03.18.el7.x86_64
+--> Processing Dependency: erlang-crypto(x86-64) = R16B-03.18.el7 for package: erlang-public_key-R16B-03.18.el7.x86_64
+---> Package erlang-sasl.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-sd_notify.x86_64 0:0.1-1.el7 will be installed
+---> Package erlang-ssl.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-stdlib.x86_64 0:R16B-03.18.el7 will be installed
+--> Processing Dependency: erlang-compiler(x86-64) = R16B-03.18.el7 for package: erlang-stdlib-R16B-03.18.el7.x86_64
+---> Package erlang-tools.x86_64 0:R16B-03.18.el7 will be installed
+--> Processing Dependency: erlang-inets(x86-64) = R16B-03.18.el7 for package: erlang-tools-R16B-03.18.el7.x86_64
+--> Processing Dependency: erlang-runtime_tools(x86-64) = R16B-03.18.el7 for package: erlang-tools-R16B-03.18.el7.x86_64
+---> Package erlang-xmerl.x86_64 0:R16B-03.18.el7 will be installed
+--> Running transaction check
+---> Package erlang-asn1.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-compiler.x86_64 0:R16B-03.18.el7 will be installed
+--> Processing Dependency: erlang-hipe(x86-64) = R16B-03.18.el7 for package: erlang-compiler-R16B-03.18.el7.x86_64
+---> Package erlang-crypto.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-inets.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-otp_mibs.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-runtime_tools.x86_64 0:R16B-03.18.el7 will be installed
+---> Package erlang-snmp.x86_64 0:R16B-03.18.el7 will be installed
+--> Running transaction check
+---> Package erlang-hipe.x86_64 0:R16B-03.18.el7 will be installed
+--> Processing Dependency: erlang-syntax_tools(x86-64) = R16B-03.18.el7 for package: erlang-hipe-R16B-03.18.el7.x86_64
+--> Running transaction check
+---> Package erlang-syntax_tools.x86_64 0:R16B-03.18.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=======================================================================================================================================
+ Package                                  Arch                       Version                            Repository                Size
+=======================================================================================================================================
+Installing:
+ python-virtualenv                        noarch                     15.1.0-2.el7                       base                     1.7 M
+ python2-pip                              noarch                     8.1.2-6.el7                        epel                     1.7 M
+ rabbitmq-server                          noarch                     3.3.5-34.el7                       epel                     4.0 M
+Installing for dependencies:
+ erlang-asn1                              x86_64                     R16B-03.18.el7                     epel                     758 k
+ erlang-compiler                          x86_64                     R16B-03.18.el7                     epel                     1.0 M
+ erlang-crypto                            x86_64                     R16B-03.18.el7                     epel                      86 k
+ erlang-erts                              x86_64                     R16B-03.18.el7                     epel                     2.5 M
+ erlang-hipe                              x86_64                     R16B-03.18.el7                     epel                     2.4 M
+ erlang-inets                             x86_64                     R16B-03.18.el7                     epel                     800 k
+ erlang-kernel                            x86_64                     R16B-03.18.el7                     epel                     1.1 M
+ erlang-mnesia                            x86_64                     R16B-03.18.el7                     epel                     700 k
+ erlang-os_mon                            x86_64                     R16B-03.18.el7                     epel                     115 k
+ erlang-otp_mibs                          x86_64                     R16B-03.18.el7                     epel                      32 k
+ erlang-public_key                        x86_64                     R16B-03.18.el7                     epel                     538 k
+ erlang-runtime_tools                     x86_64                     R16B-03.18.el7                     epel                     179 k
+ erlang-sasl                              x86_64                     R16B-03.18.el7                     epel                     293 k
+ erlang-sd_notify                         x86_64                     0.1-1.el7                          epel                     9.1 k
+ erlang-snmp                              x86_64                     R16B-03.18.el7                     epel                     1.5 M
+ erlang-ssl                               x86_64                     R16B-03.18.el7                     epel                     588 k
+ erlang-stdlib                            x86_64                     R16B-03.18.el7                     epel                     2.2 M
+ erlang-syntax_tools                      x86_64                     R16B-03.18.el7                     epel                     336 k
+ erlang-tools                             x86_64                     R16B-03.18.el7                     epel                     566 k
+ erlang-xmerl                             x86_64                     R16B-03.18.el7                     epel                     998 k
+
+Transaction Summary
+=======================================================================================================================================
+Install  3 Packages (+20 Dependent packages)
+
+Total download size: 24 M
+Installed size: 45 M
+Is this ok [y/d/N]: y
+Downloading packages:
+warning: /var/cache/yum/x86_64/7/epel/packages/erlang-crypto-R16B-03.18.el7.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID 352c64e5: NOKEY
+Public key for erlang-crypto-R16B-03.18.el7.x86_64.rpm is not installed
+(1/23): erlang-crypto-R16B-03.18.el7.x86_64.rpm                                                                 |  86 kB  00:00:00
+(2/23): erlang-asn1-R16B-03.18.el7.x86_64.rpm                                                                   | 758 kB  00:00:02
+(3/23): erlang-inets-R16B-03.18.el7.x86_64.rpm                                                                  | 800 kB  00:00:01
+(4/23): erlang-mnesia-R16B-03.18.el7.x86_64.rpm                                                                 | 700 kB  00:00:01
+(5/23): erlang-kernel-R16B-03.18.el7.x86_64.rpm                                                                 | 1.1 MB  00:00:02
+(6/23): erlang-os_mon-R16B-03.18.el7.x86_64.rpm                                                                 | 115 kB  00:00:00
+(7/23): erlang-compiler-R16B-03.18.el7.x86_64.rpm                                                               | 1.0 MB  00:00:05
+(8/23): erlang-otp_mibs-R16B-03.18.el7.x86_64.rpm                                                               |  32 kB  00:00:00
+(9/23): erlang-public_key-R16B-03.18.el7.x86_64.rpm                                                             | 538 kB  00:00:00
+(10/23): erlang-sd_notify-0.1-1.el7.x86_64.rpm                                                                  | 9.1 kB  00:00:00
+(11/23): erlang-sasl-R16B-03.18.el7.x86_64.rpm                                                                  | 293 kB  00:00:00
+(12/23): erlang-runtime_tools-R16B-03.18.el7.x86_64.rpm                                                         | 179 kB  00:00:01
+(13/23): erlang-ssl-R16B-03.18.el7.x86_64.rpm                                                                   | 588 kB  00:00:01
+(14/23): erlang-syntax_tools-R16B-03.18.el7.x86_64.rpm                                                          | 336 kB  00:00:00
+(15/23): erlang-tools-R16B-03.18.el7.x86_64.rpm                                                                 | 566 kB  00:00:00
+(16/23): erlang-erts-R16B-03.18.el7.x86_64.rpm                                                                  | 2.5 MB  00:00:08
+(17/23): erlang-hipe-R16B-03.18.el7.x86_64.rpm                                                                  | 2.4 MB  00:00:09
+(18/23): erlang-xmerl-R16B-03.18.el7.x86_64.rpm                                                                 | 998 kB  00:00:01
+(19/23): python-virtualenv-15.1.0-2.el7.noarch.rpm                                                              | 1.7 MB  00:00:02
+(20/23): erlang-snmp-R16B-03.18.el7.x86_64.rpm                                                                  | 1.5 MB  00:00:05
+(21/23): python2-pip-8.1.2-6.el7.noarch.rpm                                                                     | 1.7 MB  00:00:03
+(22/23): erlang-stdlib-R16B-03.18.el7.x86_64.rpm                                                                | 2.2 MB  00:00:08
+(23/23): rabbitmq-server-3.3.5-34.el7.noarch.rpm                                                                | 4.0 MB  00:00:05
+---------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                  1.4 MB/s |  24 MB  00:00:16
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+Importing GPG key 0x352C64E5:
+ Userid     : "Fedora EPEL (7) <epel@fedoraproject.org>"
+ Fingerprint: 91e9 7d7c 4a5e 96f1 7f3e 888f 6a2f aea2 352c 64e5
+ Package    : epel-release-7-11.noarch (@extras)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+Is this ok [y/N]:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : erlang-crypto-R16B-03.18.el7.x86_64                                                                                1/23
+  Installing : erlang-kernel-R16B-03.18.el7.x86_64                                                                                2/23
+  Installing : erlang-stdlib-R16B-03.18.el7.x86_64                                                                                3/23
+  Installing : erlang-erts-R16B-03.18.el7.x86_64                                                                                  4/23
+  Installing : erlang-syntax_tools-R16B-03.18.el7.x86_64                                                                          5/23
+  Installing : erlang-compiler-R16B-03.18.el7.x86_64                                                                              6/23
+  Installing : erlang-hipe-R16B-03.18.el7.x86_64                                                                                  7/23
+  Installing : erlang-mnesia-R16B-03.18.el7.x86_64                                                                                8/23
+  Installing : erlang-runtime_tools-R16B-03.18.el7.x86_64                                                                         9/23
+  Installing : erlang-snmp-R16B-03.18.el7.x86_64                                                                                 10/23
+  Installing : erlang-otp_mibs-R16B-03.18.el7.x86_64                                                                             11/23
+  Installing : erlang-sd_notify-0.1-1.el7.x86_64                                                                                 12/23
+  Installing : erlang-xmerl-R16B-03.18.el7.x86_64                                                                                13/23
+  Installing : erlang-asn1-R16B-03.18.el7.x86_64                                                                                 14/23
+  Installing : erlang-public_key-R16B-03.18.el7.x86_64                                                                           15/23
+  Installing : erlang-ssl-R16B-03.18.el7.x86_64                                                                                  16/23
+  Installing : erlang-inets-R16B-03.18.el7.x86_64                                                                                17/23
+  Installing : erlang-tools-R16B-03.18.el7.x86_64                                                                                18/23
+  Installing : erlang-sasl-R16B-03.18.el7.x86_64                                                                                 19/23
+  Installing : erlang-os_mon-R16B-03.18.el7.x86_64                                                                               20/23
+  Installing : rabbitmq-server-3.3.5-34.el7.noarch                                                                               21/23
+  Installing : python-virtualenv-15.1.0-2.el7.noarch                                                                             22/23
+  Installing : python2-pip-8.1.2-6.el7.noarch                                                                                    23/23
+  Verifying  : erlang-sd_notify-0.1-1.el7.x86_64                                                                                  1/23
+  Verifying  : rabbitmq-server-3.3.5-34.el7.noarch                                                                                2/23
+  Verifying  : erlang-erts-R16B-03.18.el7.x86_64                                                                                  3/23
+  Verifying  : erlang-stdlib-R16B-03.18.el7.x86_64                                                                                4/23
+  Verifying  : erlang-compiler-R16B-03.18.el7.x86_64                                                                              5/23
+  Verifying  : erlang-mnesia-R16B-03.18.el7.x86_64                                                                                6/23
+  Verifying  : erlang-crypto-R16B-03.18.el7.x86_64                                                                                7/23
+  Verifying  : python2-pip-8.1.2-6.el7.noarch                                                                                     8/23
+  Verifying  : erlang-hipe-R16B-03.18.el7.x86_64                                                                                  9/23
+  Verifying  : erlang-inets-R16B-03.18.el7.x86_64                                                                                10/23
+  Verifying  : erlang-runtime_tools-R16B-03.18.el7.x86_64                                                                        11/23
+  Verifying  : erlang-public_key-R16B-03.18.el7.x86_64                                                                           12/23
+  Verifying  : erlang-sasl-R16B-03.18.el7.x86_64                                                                                 13/23
+  Verifying  : erlang-kernel-R16B-03.18.el7.x86_64                                                                               14/23
+  Verifying  : erlang-ssl-R16B-03.18.el7.x86_64                                                                                  15/23
+  Verifying  : erlang-xmerl-R16B-03.18.el7.x86_64                                                                                16/23
+  Verifying  : erlang-os_mon-R16B-03.18.el7.x86_64                                                                               17/23
+  Verifying  : python-virtualenv-15.1.0-2.el7.noarch                                                                             18/23
+  Verifying  : erlang-otp_mibs-R16B-03.18.el7.x86_64                                                                             19/23
+  Verifying  : erlang-tools-R16B-03.18.el7.x86_64                                                                                20/23
+  Verifying  : erlang-snmp-R16B-03.18.el7.x86_64                                                                                 21/23
+  Verifying  : erlang-syntax_tools-R16B-03.18.el7.x86_64                                                                         22/23
+  Verifying  : erlang-asn1-R16B-03.18.el7.x86_64                                                                                 23/23
+
+Installed:
+  python-virtualenv.noarch 0:15.1.0-2.el7        python2-pip.noarch 0:8.1.2-6.el7        rabbitmq-server.noarch 0:3.3.5-34.el7
+
+Dependency Installed:
+  erlang-asn1.x86_64 0:R16B-03.18.el7       erlang-compiler.x86_64 0:R16B-03.18.el7     erlang-crypto.x86_64 0:R16B-03.18.el7
+  erlang-erts.x86_64 0:R16B-03.18.el7       erlang-hipe.x86_64 0:R16B-03.18.el7         erlang-inets.x86_64 0:R16B-03.18.el7
+  erlang-kernel.x86_64 0:R16B-03.18.el7     erlang-mnesia.x86_64 0:R16B-03.18.el7       erlang-os_mon.x86_64 0:R16B-03.18.el7
+  erlang-otp_mibs.x86_64 0:R16B-03.18.el7   erlang-public_key.x86_64 0:R16B-03.18.el7   erlang-runtime_tools.x86_64 0:R16B-03.18.el7
+  erlang-sasl.x86_64 0:R16B-03.18.el7       erlang-sd_notify.x86_64 0:0.1-1.el7         erlang-snmp.x86_64 0:R16B-03.18.el7
+  erlang-ssl.x86_64 0:R16B-03.18.el7        erlang-stdlib.x86_64 0:R16B-03.18.el7       erlang-syntax_tools.x86_64 0:R16B-03.18.el7
+  erlang-tools.x86_64 0:R16B-03.18.el7      erlang-xmerl.x86_64 0:R16B-03.18.el7
+
+Complete!
+[rxie@pocnnr1n1 downloads]$
