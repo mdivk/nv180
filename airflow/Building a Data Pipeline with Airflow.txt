@@ -1,0 +1,9 @@
+Building a Data Pipeline with Airflow 
+
+Ref: 
+https://tech.marksblogg.com/airflow-postgres-redis-forex.html
+https://openexchangerates.org/
+
+1. Sign up with Open Exchange Rates 
+Email: pas
+API ID: c24db0a40454c22986717b7c16e0be
