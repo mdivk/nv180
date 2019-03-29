@@ -2,7 +2,7 @@ import scala.io.Source
 import org.apache.spark.sql._
 import sys.process._
 
-//Note: usage below with an external file passed into as parameter in the spark shell argument:
+//Note: usage below with an external file passed into as parameter in the spark shell argument, the command starts with the "(":
 //(echo 'val args = List("v201902", "audit_00_fact_gaps.txt", "_audit_fact_gaps.xlsx")' ; cat audit_00_fact_gaps2excel.scala ; cat) | spark2-shell --packages com.crealytics:spark-excel_2.11:0.11.0
 
 //First clean up the old excel
